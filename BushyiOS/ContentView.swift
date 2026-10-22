@@ -253,24 +253,26 @@ struct ContentView: View {
     @State private var selectedTab: AppTab = .home
 
     var body: some View {
-        ZStack(alignment: .bottom) {
-            Group {
-                switch selectedTab {
-                case .home:
-                    HomeDashboardView()
-                case .tasks:
-                    TasksScreenView()
-                case .ai:
-                    BushyAIScreenView()
+        TabView(selection: $selectedTab) {
+            HomeDashboardView()
+                .tabItem {
+                    Label("Home", systemImage: "house.fill")
                 }
-            }
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .tag(AppTab.home)
 
-            // Floating Navigation Pill matching Android screenshot
-            FloatingBottomBar(selectedTab: $selectedTab)
-                .padding(.bottom, 14)
+            TasksScreenView()
+                .tabItem {
+                    Label("Missions", systemImage: "list.bullet.clipboard.fill")
+                }
+                .tag(AppTab.tasks)
+
+            BushyAIScreenView()
+                .tabItem {
+                    Label("Bushy AI", systemImage: "sparkles")
+                }
+                .tag(AppTab.ai)
         }
-        .ignoresSafeArea(.keyboard, edges: .bottom)
+        .tint(.primary)
         .environmentObject(appState)
     }
 }
@@ -356,7 +358,7 @@ struct HomeDashboardView: View {
                     // Stats Grid matching exact Android layout
                     StatsGridView()
                         .padding(.horizontal, 20)
-                        .padding(.bottom, 96)
+                        .padding(.bottom, 24)
                 }
             }
             .navigationBarTitleDisplayMode(.inline)
@@ -714,7 +716,7 @@ struct TasksScreenView: View {
                     }
                 }
                 .padding(.trailing, 24)
-                .padding(.bottom, 96)
+                .padding(.bottom, 24)
             }
             .navigationTitle("Daily Missions")
             .navigationBarTitleDisplayMode(.large)
@@ -1105,7 +1107,7 @@ struct SmartInterpreterSection: View {
                 }
             }
             .padding(.vertical)
-            .padding(.bottom, 96)
+            .padding(.bottom, 24)
         }
         .searchable(text: $queryText, prompt: "Type dish in Hindi, Tamil, English...")
     }

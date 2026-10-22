@@ -1321,80 +1321,132 @@ struct FoodDetailSheet: View {
     }
 }
 
-// MARK: - Floating Bottom Bar (Matching Android Pill)
+// MARK: - Floating Bottom Bar (Liquid Glass Format)
 struct FloatingBottomBar: View {
     @Binding var selectedTab: AppTab
+    @Namespace private var tabAnimation
 
     var body: some View {
-        HStack(spacing: 24) {
-            // Tab 1: Home
-            Button {
-                withAnimation(.spring(response: 0.25, dampingFraction: 0.7)) {
-                    selectedTab = .home
-                }
-            } label: {
-                ZStack {
-                    if selectedTab == .home {
-                        Circle()
-                            .fill(Color.black)
-                            .frame(width: 48, height: 48)
-                    }
-                    Image(systemName: "house.fill")
-                        .font(.system(size: 20, weight: .semibold))
-                        .foregroundStyle(selectedTab == .home ? Color.white : Color.primary)
-                }
-                .frame(width: 48, height: 48)
-            }
-
-            // Tab 2: Daily Missions / Tasks (Center Tab)
-            Button {
-                withAnimation(.spring(response: 0.25, dampingFraction: 0.7)) {
-                    selectedTab = .tasks
-                }
-            } label: {
-                ZStack {
-                    if selectedTab == .tasks {
-                        Circle()
-                            .fill(Color.black)
-                            .frame(width: 48, height: 48)
-                    }
-                    Image(systemName: "list.bullet.clipboard.fill")
-                        .font(.system(size: 20, weight: .semibold))
-                        .foregroundStyle(selectedTab == .tasks ? Color.white : Color.primary)
-                }
-                .frame(width: 48, height: 48)
-            }
-
-            // Tab 3: Bushy AI / Smart Search
-            Button {
-                withAnimation(.spring(response: 0.25, dampingFraction: 0.7)) {
-                    selectedTab = .ai
-                }
-            } label: {
-                ZStack {
-                    if selectedTab == .ai {
-                        Circle()
-                            .fill(Color.black)
-                            .frame(width: 48, height: 48)
-                    }
-                    Image(systemName: "sparkles")
-                        .font(.system(size: 20, weight: .semibold))
-                        .foregroundStyle(selectedTab == .ai ? Color.white : Color.primary)
-                }
-                .frame(width: 48, height: 48)
-            }
+        HStack(spacing: 18) {
+            tabButton(tab: .home, icon: "house.fill")
+            tabButton(tab: .tasks, icon: "list.bullet.clipboard.fill")
+            tabButton(tab: .ai, icon: "sparkles")
         }
         .padding(.horizontal, 10)
-        .padding(.vertical, 6)
-        .background(
+        .padding(.vertical, 8)
+        .background {
+            // Liquid Glass Capsule Base
+            ZStack {
+                // Blur material
+                Capsule()
+                    .fill(.ultraThinMaterial)
+
+                // Translucent liquid tint gradient
+                Capsule()
+                    .fill(
+                        LinearGradient(
+                            colors: [
+                                Color.white.opacity(0.35),
+                                Color.white.opacity(0.12),
+                                Color(uiColor: .systemBackground).opacity(0.5)
+                            ],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        )
+                    )
+
+                // Top liquid specular reflection highlight
+                VStack {
+                    Capsule()
+                        .fill(
+                            LinearGradient(
+                                colors: [Color.white.opacity(0.6), Color.white.opacity(0.0)],
+                                startPoint: .top,
+                                endPoint: .bottom
+                            )
+                        )
+                        .frame(height: 18)
+                        .padding(.horizontal, 14)
+                        .padding(.top, 2)
+                    Spacer()
+                }
+            }
+        }
+        .overlay {
+            // Liquid Glass Specular Rim Border
             Capsule()
-                .fill(Color(uiColor: .systemBackground))
-                .shadow(color: Color.black.opacity(0.12), radius: 16, x: 0, y: 4)
-        )
-        .overlay(
-            Capsule()
-                .stroke(Color.black.opacity(0.9), lineWidth: 1.8)
-        )
+                .stroke(
+                    LinearGradient(
+                        colors: [
+                            Color.white.opacity(0.85),
+                            Color.white.opacity(0.35),
+                            Color.black.opacity(0.12),
+                            Color.white.opacity(0.4)
+                        ],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    ),
+                    lineWidth: 1.5
+                )
+        }
+        .shadow(color: Color.black.opacity(0.15), radius: 24, x: 0, y: 10)
+        .shadow(color: Color.black.opacity(0.08), radius: 6, x: 0, y: 3)
+    }
+
+    @ViewBuilder
+    private func tabButton(tab: AppTab, icon: String) -> some View {
+        let isSelected = selectedTab == tab
+
+        Button {
+            UIImpactFeedbackGenerator(style: .light).impactOccurred()
+            withAnimation(.spring(response: 0.35, dampingFraction: 0.72)) {
+                selectedTab = tab
+            }
+        } label: {
+            ZStack {
+                // Sliding Liquid Bubble Indicator
+                if isSelected {
+                    Circle()
+                        .fill(
+                            LinearGradient(
+                                colors: [
+                                    Color.black,
+                                    Color(white: 0.12)
+                                ],
+                                startPoint: .top,
+                                endPoint: .bottom
+                            )
+                        )
+                        .overlay {
+                            // Liquid specular light reflection inside the bubble
+                            Circle()
+                                .stroke(
+                                    LinearGradient(
+                                        colors: [
+                                            Color.white.opacity(0.5),
+                                            Color.white.opacity(0.05)
+                                        ],
+                                        startPoint: .top,
+                                        endPoint: .bottom
+                                    ),
+                                    lineWidth: 1.2
+                                )
+                        }
+                        .shadow(color: Color.black.opacity(0.35), radius: 10, x: 0, y: 5)
+                        .matchedGeometryEffect(id: "activeTabLiquidBubble", in: tabAnimation)
+                        .frame(width: 52, height: 52)
+                }
+
+                Image(systemName: icon)
+                    .font(.system(size: 21, weight: isSelected ? .bold : .medium))
+                    .foregroundStyle(isSelected ? Color.white : Color.primary.opacity(0.6))
+                    .scaleEffect(isSelected ? 1.06 : 0.95)
+                    .animation(.spring(response: 0.3, dampingFraction: 0.65), value: isSelected)
+            }
+            .frame(width: 52, height: 52)
+            .contentShape(Circle())
+        }
+        .buttonStyle(.plain)
     }
 }
 

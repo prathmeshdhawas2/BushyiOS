@@ -1,0 +1,32 @@
+# Xcode & Apple OS
+## User-specific files
+*.xcuserstate
+project.xcworkspace/xcuserdata/
+BushyiOS.xcodeproj/xcuserdata/
+xcuserdata/
+DerivedData/
+*.moved-aside
+*.ipa
+*.dSYM.zip
+*.dSYM
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon\r\r
+._*
+.Spotlight-V100
+.Trashes
+
+# Gradle & Kotlin Multiplatform builds
+.gradle/
+build/
+shared/build/
+*.hprof
+.idea/
+*.iml
+
+# Ensure Pre-built Frameworks directory is committed
+!Frameworks/
+!Frameworks/**

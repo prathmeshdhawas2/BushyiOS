@@ -360,22 +360,48 @@ struct HomeDashboardView: View {
                 }
             }
             .navigationBarTitleDisplayMode(.inline)
+            .toolbarBackground(.ultraThinMaterial, for: .navigationBar)
+            .toolbarBackground(.visible, for: .navigationBar)
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
-                    Button {
+                    Menu {
+                        Button {
+                            for task in appState.tasks {
+                                appState.resetTask(taskId: task.id)
+                            }
+                        } label: {
+                            Label("Reset Daily Missions", systemImage: "arrow.counterclockwise")
+                        }
+
+                        Button(role: .destructive) {
+                            appState.clearLoggedMeals()
+                        } label: {
+                            Label("Clear Logged Meals", systemImage: "trash")
+                        }
                     } label: {
                         Image(systemName: "ellipsis")
-                            .font(.system(size: 18, weight: .bold))
+                            .font(.system(size: 14, weight: .bold))
                             .foregroundStyle(.primary)
+                            .frame(width: 36, height: 36)
+                            .background(.ultraThinMaterial, in: Circle())
+                            .overlay(Circle().stroke(Color.primary.opacity(0.12), lineWidth: 0.8))
                     }
                 }
 
+                ToolbarItem(placement: .principal) {
+                    Text("\(appState.userName)'s Bushy")
+                        .font(.system(size: 16, weight: .bold, design: .rounded))
+                        .foregroundStyle(.primary)
+                }
+
                 ToolbarItem(placement: .topBarTrailing) {
-                    Button {
-                    } label: {
+                    ShareLink(item: "I am Level \(appState.level) with \(appState.steps) steps on Bushy!") {
                         Image(systemName: "square.and.arrow.up")
-                            .font(.system(size: 18, weight: .bold))
+                            .font(.system(size: 14, weight: .bold))
                             .foregroundStyle(.primary)
+                            .frame(width: 36, height: 36)
+                            .background(.ultraThinMaterial, in: Circle())
+                            .overlay(Circle().stroke(Color.primary.opacity(0.12), lineWidth: 0.8))
                     }
                 }
             }
@@ -624,13 +650,6 @@ struct TasksScreenView: View {
             ZStack(alignment: .bottomTrailing) {
                 ScrollView(showsIndicators: false) {
                     VStack(alignment: .leading, spacing: 20) {
-                        // Title
-                        Text("Daily Missions")
-                            .font(.system(size: 32, weight: .black, design: .rounded))
-                            .foregroundStyle(.primary)
-                            .padding(.horizontal, 24)
-                            .padding(.top, 16)
-
                         // Filter Chips
                         HStack(spacing: 8) {
                             TaskFilterChip(
@@ -697,7 +716,10 @@ struct TasksScreenView: View {
                 .padding(.trailing, 24)
                 .padding(.bottom, 96)
             }
-            .navigationBarTitleDisplayMode(.inline)
+            .navigationTitle("Daily Missions")
+            .navigationBarTitleDisplayMode(.large)
+            .toolbarBackground(.ultraThinMaterial, for: .navigationBar)
+            .toolbarBackground(.visible, for: .navigationBar)
             .sheet(isPresented: $showAddTaskSheet) {
                 AddTaskSheet()
             }
@@ -971,6 +993,8 @@ struct BushyAIScreenView: View {
             }
             .navigationTitle("Bushy AI & Nutrition")
             .navigationBarTitleDisplayMode(.inline)
+            .toolbarBackground(.ultraThinMaterial, for: .navigationBar)
+            .toolbarBackground(.visible, for: .navigationBar)
         }
     }
 }
